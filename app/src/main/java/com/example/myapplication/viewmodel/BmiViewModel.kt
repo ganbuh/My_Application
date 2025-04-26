@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
-import com.example.myapplication.model.BmiModel
+import com.example.myapplication.domain.usecase.CalculateBmiUseCase
 
 class BmiViewModel : ViewModel() {
+
+    private val calculateBmiUseCase = CalculateBmiUseCase()
 
     private val _height = mutableStateOf("")
     val height: State<String> = _height
@@ -31,8 +33,7 @@ class BmiViewModel : ViewModel() {
         val weightKg = _weight.value.toFloatOrNull()
 
         if (heightCm != null && weightKg != null && heightCm > 0) {
-            val bmiModel = BmiModel(heightCm, weightKg)
-            val bmi = bmiModel.calculateBmi()
+            val bmi = calculateBmiUseCase.execute(heightCm, weightKg)
             _bmiResult.value = String.format("%.2f", bmi)
         } else {
             _bmiResult.value = "入力が正しくありません"
