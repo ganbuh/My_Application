@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import com.example.myapplication.domain.usecase.CalculateBmiUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class BmiViewModel : ViewModel() {
-
-    private val calculateBmiUseCase = CalculateBmiUseCase()
+@HiltViewModel
+class BmiViewModel @Inject constructor(
+    private val calculateBmiUseCase: CalculateBmiUseCase
+) : ViewModel() {
 
     private val _height = mutableStateOf("")
     val height: State<String> = _height
