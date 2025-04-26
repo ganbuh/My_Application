@@ -1,6 +1,6 @@
-package com.example.myapplication.ui
+package com.example.myapplication.presentation.ui.screens
 
-import com.example.myapplication.viewmodel.BmiViewModel
+import com.example.myapplication.presentation.viewmodel.BmiViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
