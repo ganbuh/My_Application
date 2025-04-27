@@ -1,6 +1,7 @@
 package com.example.myapplication.data.repository
 
 import android.content.Context
+import com.example.myapplication.domain.repository.BmiResultRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,8 +14,8 @@ import javax.inject.Inject
 
 class FileBmiResultRepository @Inject constructor(
     @ApplicationContext  val context: Context
-) {
-    suspend fun saveBmiResult(bmiResult: String): Boolean {
+) : BmiResultRepository {
+    override suspend fun saveBmiResult(bmiResult: String): Boolean {
         return try {
                 val content = "BMI: $bmiResult, Date: ${getCurrentDateTime()}"
                 val file = File(context.filesDir, "bmi_result.txt")
