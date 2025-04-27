@@ -1,11 +1,14 @@
 package com.example.myapplication.di
 
+import android.content.Context
+import com.example.myapplication.data.repository.FileBmiResultRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import com.example.myapplication.domain.usecase.CalculateBmiUseCase
 import com.example.myapplication.domain.usecase.SaveBmiResultUseCase
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
 @Module
@@ -20,7 +23,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSaveBmiResultUseCase(): SaveBmiResultUseCase {
-        return SaveBmiResultUseCase()
+    fun provideSaveBmiResultUseCase(fileBmiResultRepository: FileBmiResultRepository): SaveBmiResultUseCase {
+        return SaveBmiResultUseCase(fileBmiResultRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFileBmiResultRepository(@ApplicationContext context: Context): FileBmiResultRepository {
+        return FileBmiResultRepository(context)
     }
 }

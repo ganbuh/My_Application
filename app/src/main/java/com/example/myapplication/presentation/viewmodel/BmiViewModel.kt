@@ -1,7 +1,6 @@
 package com.example.myapplication.presentation.viewmodel
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
@@ -10,19 +9,15 @@ import com.example.myapplication.domain.usecase.CalculateBmiUseCase
 import com.example.myapplication.domain.usecase.SaveBmiResultUseCase
 import com.example.myapplication.presentation.events.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class BmiViewModel @Inject constructor(
     private val calculateBmiUseCase: CalculateBmiUseCase,
     private val saveBmiResultUseCase: SaveBmiResultUseCase,
-    @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
     private val _height = mutableStateOf("")
@@ -62,7 +57,7 @@ class BmiViewModel @Inject constructor(
         val bmiValue = _bmiResult.value
         if (bmiValue.isNotBlank() && bmiValue != "入力が正しくありません") {
             viewModelScope.launch {
-                val isSaved = saveBmiResultUseCase.execute(bmiValue, appContext)
+                val isSaved = saveBmiResultUseCase.execute(bmiValue)
                 if (isSaved) {
                     sendSnackbarMessage("保存に成功しました")
                 } else {
