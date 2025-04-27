@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.domain.usecase.CalculateBmiUseCase
+import com.example.myapplication.domain.usecase.SaveBmiResultUseCase
 import com.example.myapplication.presentation.events.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -15,17 +16,12 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class BmiViewModel @Inject constructor(
     private val calculateBmiUseCase: CalculateBmiUseCase,
+    private val saveBmiResultUseCase: SaveBmiResultUseCase,
     @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
@@ -66,7 +62,7 @@ class BmiViewModel @Inject constructor(
         val bmiValue = _bmiResult.value
         if (bmiValue.isNotBlank() && bmiValue != "入力が正しくありません") {
             viewModelScope.launch {
-                val isSaved = saveToFile("bmi_result.txt", "BMI: $bmiValue, Date: ${getCurrentDateTime()}")
+                val isSaved = saveBmiResultUseCase.execute(bmiValue, appContext)
                 if (isSaved) {
                     sendSnackbarMessage("保存に成功しました")
                 } else {
@@ -80,32 +76,8 @@ class BmiViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveToFile(fileName: String, content: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                val file = File(appContext.filesDir, fileName)
-                val fileOutputStream = FileOutputStream(file, true) // true で追記モード
-                fileOutputStream.bufferedWriter().use { writer ->
-                    writer.appendLine(content)
-                }
-                println("BMI結果をファイルに保存しました: ${file.absolutePath}")
-                true
-            } catch (e: IOException) {
-                e.printStackTrace()
-                println("ファイルの保存に失敗しました: ${e.message}")
-                sendSnackbarMessage("ファイルの保存に失敗しました")
-                false
-            }
-        }
-    }
-
     private suspend fun sendSnackbarMessage(message: String) {
         // UiEvent を送信するための非同期処理
         _uiEvent.send(UiEvent.ShowSnackbar(message))
-    }
-
-    private fun getCurrentDateTime(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        return sdf.format(Date())
     }
 }

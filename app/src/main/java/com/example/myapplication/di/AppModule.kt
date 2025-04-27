@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import com.example.myapplication.domain.usecase.CalculateBmiUseCase
+import com.example.myapplication.domain.usecase.SaveBmiResultUseCase
 import javax.inject.Singleton
 
 @Module
@@ -15,5 +16,11 @@ object AppModule {
     @Singleton
     fun provideCalculateBmiUseCase(): CalculateBmiUseCase {
         return CalculateBmiUseCase()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSaveBmiResultUseCase(): SaveBmiResultUseCase {
+        return SaveBmiResultUseCase()
     }
 }
